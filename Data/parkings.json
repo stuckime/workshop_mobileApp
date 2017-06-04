@@ -1,0 +1,27 @@
+{
+  "Parking1" : {
+    "Name" : "Parking Nr. 1",
+	"Status" : "frei",
+	"Place" : "1. von Links" 
+  },
+  "Parking2" : {
+    "Name" : "Parking Nr. 2",
+	"Status" : "besetzt",
+	"Place" : "2. von Links" 
+  },
+  "Parking3" : {
+    "Name" : "Parking Nr. 3",
+	"Status" : "frei",
+	"Place" : "3. von Rechts" 
+  },
+  "Parking4" : {
+    "Name" : "Parking Nr. 4",
+	"Status" : "frei",
+	"Place" : "4. von Rechts" 
+  },
+  "Parking5" : {
+    "Name" : "Parking Nr. 5",
+	"Status" : "frei",
+	"Place" : "5. von Rechts" 
+  }
+}

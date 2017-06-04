@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "672053684391",
+    "firebase_url": "https://parkyourcar-247cd.firebaseio.com",
+    "project_id": "parkyourcar-247cd",
+    "storage_bucket": "parkyourcar-247cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672053684391:android:6975e8a5ee1c1a38",
+        "android_client_info": {
+          "package_name": "ch.fhnw.parking.parkyourcar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672053684391-pm68s7uushsa6qcq138edbhp3011c7fn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ch.fhnw.parking.parkyourcar",
+            "certificate_hash": "4896ddc363af5a4a4f15b425380bb24be59efe28"
+          }
+        },
+        {
+          "client_id": "672053684391-h2i5g0re9eefbbbi266r60e2mtu4j6lh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy3vRB1lsN_SU0KFFE_eEEcUdZW8nbgKE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672053684391-h2i5g0re9eefbbbi266r60e2mtu4j6lh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
