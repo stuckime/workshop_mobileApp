@@ -55,7 +55,6 @@ public class ParkingDetailActivity extends AppCompatActivity {
        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
            @Override
            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                if (isChecked) {
                    myRef.child(dbId).child("Status").setValue("frei");
                    viewStatus.setText("frei");
