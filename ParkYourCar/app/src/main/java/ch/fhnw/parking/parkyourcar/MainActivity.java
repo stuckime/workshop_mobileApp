@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,10 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -34,16 +33,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final String PARKING_STATUS = "status";
     public static final String PARKING_PLACE = "place";
     public static final String PARKING_DBID = "dbid";
-    //private ArrayAdapter<String> arrayAdapter;
-    private MyListAdapter arrayAdapter;
+    private ArrayAdapter<ParkingModel> arrayAdapter;
     private ListView listView;
     private DatabaseReference myRef;
     private MainActivity main;
 
     private ArrayList<ParkingModel> parkings;
-
-    //tutorial
-    private ArrayList<String> data = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,42 +47,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         main = this;
         listView = (ListView) findViewById(R.id.listview);
 
-        //tutorial
-        /*
-        generateContext();
-        listView.setAdapter(new MyListAdapter(this, R.layout.list_item, data));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, "List item was clicked at " + position, Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
-
-
-
-
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("parkings");
         addParkings();
     }
 
-    private void generateContext() {
-        for(int i = 0; i < 10; i++ ){
-            data.add("This is Row number "+i);
-        }
-    }
-
     private void addParkings(){
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               // String value = dataSnapshot.getValue(String.class);
-                parkings = new ArrayList<ParkingModel>();
-                for (DataSnapshot parking: dataSnapshot.getChildren()){
-                    parkings.add(new ParkingModel((String)parking.child("Name").getValue(), (String)parking.child("Status").getValue(),(String)parking.child("Place").getValue(), (String)parking.getKey()));
+                parkings = new ArrayList<>();
 
-                    //arrayAdapter.add((String)parking.child("Name").getValue());
+                for (DataSnapshot parking: dataSnapshot.getChildren()) {
+                    ParkingModel parkingModel = new ParkingModel((String) parking.child("Name").getValue(), (String) parking.child("Status").getValue(), (String) parking.child("Place").getValue(), parking.getKey());
+                    parkings.add(parkingModel);
+
                 }
                 arrayAdapter = new MyListAdapter(main, R.layout.list_item, parkings);
                 listView.setAdapter(arrayAdapter);
@@ -99,17 +74,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
         });
-
-        String[] parkings = new String[6];
-
-
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         Intent detailIntent = new Intent(this, ParkingDetailActivity.class);
-        String value = arrayAdapter.getItem(position).toString();
+        String value = arrayAdapter.getItem(position).getName();
         for (ParkingModel parking: parkings){
             if (parking.getName().equals(value)){
                 detailIntent.putExtra(PARKING_NAME,value);
@@ -126,43 +97,62 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private class MyListAdapter extends ArrayAdapter<ParkingModel> {
 
         private int layout;
-        private MyListAdapter(Context context, int resource, List<ParkingModel> objects) {
+        private ArrayList<ParkingModel> adapterParkings;
+        private MyListAdapter(Context context, int resource, ArrayList<ParkingModel> objects) {
             super(context, resource, objects);
+            adapterParkings = objects;
             layout = resource;
         }
 
         @NonNull
         @Override
         public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            ViewHolder mainViewHolder = null;
-            if(convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                convertView = inflater.inflate(layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder();
-                viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.list_item_thumbnail);
-                viewHolder.title = (TextView) convertView.findViewById(R.id.list_item_text);
-                viewHolder.button = (Button) convertView.findViewById(R.id.list_item_btn);
-                //viewHolder.title.setText("List "+position);
-                viewHolder.button.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Toast.makeText(getContext(), "Button was clicked for list item "+position, Toast.LENGTH_SHORT).show();
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(layout, parent, false);
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.list_item_thumbnail);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.list_item_name);
+            viewHolder.place = (TextView) convertView.findViewById(R.id.list_item_place);
+            viewHolder.button = (ToggleButton) convertView.findViewById(R.id.list_item_btn);
+
+            ParkingModel parkingModel = adapterParkings.get(position);
+            viewHolder.name.setText(parkingModel.getName());
+            viewHolder.place.setText(parkingModel.getPlace());
+            viewHolder.button.setText(parkingModel.getStatus());
+
+            viewHolder.button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Button was clicked for list item "+position, Toast.LENGTH_SHORT).show();
+                }
+            });
+            /*
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("parkings");
+            viewHolder.button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (isChecked) {
+                        myRef.child(PARKING_DBID).child("Status").setValue("frei");
+                        //viewStatus.setText("frei");
+                    } else {
+                        myRef.child(PARKING_DBID).child("Status").setValue("besetzt");
+                        //viewStatus.setText("besetzt");
                     }
-                });
-                convertView.setTag(viewHolder);
+                }
+            });
+            */
+            convertView.setTag(viewHolder);
 
-            } else {
-                mainViewHolder = (ViewHolder) convertView.getTag();
-                //mainViewHolder.title.setText(getItem(position));
-
-            }
             return convertView;
         }
     }
 
     //tutorial
-    public class ViewHolder {
+    private class ViewHolder {
         ImageView thumbnail;
-        TextView title;
-        Button button;
+        TextView name;
+        TextView place;
+        ToggleButton button;
     }
 }
