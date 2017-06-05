@@ -8,17 +8,17 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context="ch.fhnw.parking.parkyourcar.MainActivity">
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/spline_logo" />
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listview"/>
-
-
 
 
 </LinearLayout>
