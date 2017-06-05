@@ -12,12 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,8 +59,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 for (DataSnapshot parking: dataSnapshot.getChildren()) {
                     ParkingModel parkingModel = new ParkingModel((String) parking.child("Name").getValue(), (String) parking.child("Status").getValue(), (String) parking.child("Place").getValue(), parking.getKey());
-                    parkings.add(parkingModel);
-
+                    if(parkingModel.getName() != null) {
+                        parkings.add(parkingModel);
+                        System.out.println(parkingModel.getName());
+                    }
                 }
                 arrayAdapter = new MyListAdapter(main, R.layout.list_item, parkings);
                 listView.setAdapter(arrayAdapter);
@@ -81,16 +81,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Intent detailIntent = new Intent(this, ParkingDetailActivity.class);
         String value = arrayAdapter.getItem(position).getName();
-        for (ParkingModel parking: parkings){
-            if (parking.getName().equals(value)){
-                detailIntent.putExtra(PARKING_NAME,value);
-                detailIntent.putExtra(PARKING_STATUS, parking.getStatus());
-                detailIntent.putExtra(PARKING_PLACE, parking.getPlace());
-                detailIntent.putExtra(PARKING_DBID, parking.getDbId());
-
+        ParkingModel parking = null;
+        System.out.println(value);
+        for (ParkingModel p: parkings){
+            System.out.println(p.getName());
+            if (value != null && p.getName().equals(value)){
+                parking = p;
             }
         }
-        startActivity(detailIntent);
+        if(parking != null) {
+            detailIntent.putExtra(PARKING_NAME,value);
+            detailIntent.putExtra(PARKING_STATUS, parking.getStatus());
+            detailIntent.putExtra(PARKING_PLACE, parking.getPlace());
+            detailIntent.putExtra(PARKING_DBID, parking.getDbId());
+            startActivity(detailIntent);
+        }
+
     }
 
     //tutorial
@@ -113,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.list_item_thumbnail);
             viewHolder.name = (TextView) convertView.findViewById(R.id.list_item_name);
             viewHolder.place = (TextView) convertView.findViewById(R.id.list_item_place);
-            viewHolder.button = (ToggleButton) convertView.findViewById(R.id.list_item_btn);
+            viewHolder.button = (Button) convertView.findViewById(R.id.list_item_btn);
 
             ParkingModel parkingModel = adapterParkings.get(position);
             viewHolder.name.setText(parkingModel.getName());
@@ -125,23 +131,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     Toast.makeText(getContext(), "Button was clicked for list item "+position, Toast.LENGTH_SHORT).show();
                 }
             });
-            /*
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            myRef = database.getReference("parkings");
-            viewHolder.button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                    if (isChecked) {
-                        myRef.child(PARKING_DBID).child("Status").setValue("frei");
-                        //viewStatus.setText("frei");
-                    } else {
-                        myRef.child(PARKING_DBID).child("Status").setValue("besetzt");
-                        //viewStatus.setText("besetzt");
-                    }
-                }
-            });
-            */
             convertView.setTag(viewHolder);
 
             return convertView;
@@ -153,6 +142,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ImageView thumbnail;
         TextView name;
         TextView place;
-        ToggleButton button;
+        Button button;
     }
 }
