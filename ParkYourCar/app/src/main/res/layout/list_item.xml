@@ -11,6 +11,7 @@
         android:layout_height="65dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="3dp"
         app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
     <TextView
@@ -28,7 +29,6 @@
         android:text="OKAY"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/my_btn_toggle"
         />
 
     <TextView

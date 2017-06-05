@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -19,6 +20,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     TextView viewStatus;
     TextView viewPos;
     ToggleButton toggle;
+    ImageView viewIcon;
 
     DatabaseReference myRef;
 
@@ -30,6 +32,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         viewName = (TextView) findViewById(R.id.textName);
         viewStatus = (TextView) findViewById(R.id.textOccupation);
         viewPos = (TextView) findViewById(R.id.textPlace);
+        viewIcon = (ImageView) findViewById(R.id.imageParking);
 
         Intent intent = getIntent();
         String name = intent.getStringExtra(MainActivity.PARKING_NAME);
@@ -39,12 +42,13 @@ public class ParkingDetailActivity extends AppCompatActivity {
         viewName.setText(Html.fromHtml("<h2>"+name+"</h2>"));
         viewStatus.setText(status);
         viewPos.setText(place);
+        viewIcon.setImageResource(ParkingUtility.getIcon(dbId, status));
 
 
         toggle = (ToggleButton) findViewById(R.id.toggleButton);
-        toggle.setTextOff("besetzt");
-        toggle.setTextOn("frei");
-        if (status.equals("frei")){
+        toggle.setTextOff("frei");
+        toggle.setTextOn("besetzt");
+        if (status.equals("besetzt")){
             toggle.setChecked(true);
         }else{
             toggle.setChecked(false);
@@ -56,12 +60,15 @@ public class ParkingDetailActivity extends AppCompatActivity {
            @Override
            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                if (isChecked) {
-                   myRef.child(dbId).child("Status").setValue("frei");
-                   viewStatus.setText("frei");
-               } else {
                    myRef.child(dbId).child("Status").setValue("besetzt");
                    viewStatus.setText("besetzt");
+                   viewIcon.setImageResource(ParkingUtility.getIcon(dbId, "besetzt"));
+               } else {
+                   myRef.child(dbId).child("Status").setValue("frei");
+                   viewStatus.setText("frei");
+                   viewIcon.setImageResource(ParkingUtility.getIcon(dbId, "frei"));
                }
+
            }
        });
 

@@ -2,10 +2,12 @@ package ch.fhnw.parking.parkyourcar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final String PARKING_DBID = "dbid";
     private ArrayAdapter<ParkingModel> arrayAdapter;
     private ListView listView;
+    private GifImageView loadingScreen;
+    private LinearLayout linearLayout;
     private DatabaseReference myRef;
     private MainActivity main;
 
@@ -43,7 +48,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         main = this;
+        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         listView = (ListView) findViewById(R.id.listview);
+        linearLayout.setBackgroundColor(getResources().getColor(R.color.background));
+        loadingScreen = (GifImageView) findViewById(R.id.loadingImage);
+        loadingScreen.setGifImageResource(R.drawable.loading);
 
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -66,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 arrayAdapter = new MyListAdapter(main, R.layout.list_item, parkings);
                 listView.setAdapter(arrayAdapter);
                 listView.setOnItemClickListener(main);
+
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.white));
+                loadingScreen.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -120,12 +132,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             final ParkingModel parkingModel = adapterParkings.get(position);
 
-            viewHolder.name.setText(parkingModel.getName());
+            viewHolder.thumbnail.setImageResource(ParkingUtility.getIcon(parkingModel.getDbId(), parkingModel.getStatus()));
+            viewHolder.name.setText(Html.fromHtml("<h2>"+parkingModel.getName()+"</h2>"));
             viewHolder.place.setText(parkingModel.getPlace());
 
-            viewHolder.button.setTextOff("besetzt");
-            viewHolder.button.setTextOn("frei");
-            if (parkingModel.getStatus().equals("frei")){
+            viewHolder.button.setTextOff("frei");
+            viewHolder.button.setTextOn("besetzt");
+            if (parkingModel.getStatus().equals("besetzt")){
                 viewHolder.button.setChecked(true);
             }else{
                 viewHolder.button.setChecked(false);
@@ -135,9 +148,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        myRef.child(parkingModel.getDbId()).child("Status").setValue("frei");
-                    } else {
                         myRef.child(parkingModel.getDbId()).child("Status").setValue("besetzt");
+                    } else {
+                        myRef.child(parkingModel.getDbId()).child("Status").setValue("frei");
                     }
                 }
             });
