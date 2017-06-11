@@ -46,8 +46,8 @@ public class ParkingDetailActivity extends AppCompatActivity {
 
 
         toggle = (ToggleButton) findViewById(R.id.toggleButton);
-        toggle.setTextOff("besetzen");
-        toggle.setTextOn("freigeben");
+        toggle.setTextOff(getString(R.string.toggleOff));
+        toggle.setTextOn(getString(R.string.toggleOn));
         if (status.equals("besetzt")){
             toggle.setChecked(true);
         }else{

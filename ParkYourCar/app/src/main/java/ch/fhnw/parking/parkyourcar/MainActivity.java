@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             viewHolder.name.setText(Html.fromHtml("<h2>"+parkingModel.getName()+"</h2>"));
             viewHolder.place.setText(parkingModel.getPlace());
 
-            viewHolder.button.setTextOff("frei");
-            viewHolder.button.setTextOn("besetzt");
+            viewHolder.button.setTextOff(getString(R.string.toggleOff));
+            viewHolder.button.setTextOn(getString(R.string.toggleOn));
             if (parkingModel.getStatus().equals("besetzt")){
                 viewHolder.button.setChecked(true);
             }else{

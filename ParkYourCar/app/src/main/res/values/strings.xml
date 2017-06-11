@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ParkYourCar</string>
+    <string name="toggleOn">freigeben</string>
+    <string name="toggleOff">besetzen</string>
+    <string name="app_description">Parking App for Spline AG
+</string>
+
+
+
 </resources>
